@@ -34,6 +34,7 @@ def test_int2float():
     from int2float.io import io_generator
     test(tnet, 11, 'int2float/int2float.bsd', io_generator)
 
+# 测试随机输入下的性能
 def random_test_time(testbench : str, input_len : int):
     tnet = tn.from_bsd(f'{testbench}/{testbench}.bsd')
     tnet.to_cdl(f'{testbench}/{testbench}.cdl')

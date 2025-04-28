@@ -1,5 +1,5 @@
 from Tnet_union import TransistorNet_kernel
-# from Tnet_tree import TransistorNet_kernel
+# from Tnet_graph import TransistorNet_kernel
 
 class TransistorNet(TransistorNet_kernel):
     @staticmethod
