@@ -1,6 +1,17 @@
-from Transistor import Transistor
-
 class TransistorNet_kernel:
+    class Transistor:
+        def __init__(self, t_type, transistor_id, g_id, d_id, s_id):
+            self.type = t_type  # "pmos" / "nmos"
+            self.id = transistor_id
+            self.g_id = g_id    # gate
+            self.d_id = d_id    # drain
+            self.s_id = s_id    # source
+
+            # default values
+            self.w = 54.0       # width in nm
+            self.l = 20       # length in nm
+            self.nfin = 2      # number of fins
+    
     class UnionFind:
         # a simple implementation of union-find data structure
         def __init__(self):
@@ -58,7 +69,7 @@ class TransistorNet_kernel:
             self.node_info[node_id] = (None, None)
         
         # create a new transistor object and store it
-        t = Transistor(t_type, transistor_id, g_id, d_id, s_id)
+        t = self.Transistor(t_type, transistor_id, g_id, d_id, s_id)
         self.transistors.append(t)
         # update the node_info
         self.node_info[g_id] = (t, 'G')

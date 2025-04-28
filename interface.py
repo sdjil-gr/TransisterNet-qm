@@ -1,19 +1,18 @@
 # only as a example, not complete
 
-class Transistor:
-    def __init__(self, t_type : str, transistor_id : str, g_id : str, d_id : str, s_id : str):
-        self.type = t_type  # "pmos" / "nmos"
-        self.id = transistor_id
-        self.g_id = g_id    # gate
-        self.d_id = d_id    # drain
-        self.s_id = s_id    # source
-
-        # default values
-        self.w = 54.0       # width in nm
-        self.l = 20       # length in nm
-        self.nfin = 2      # number of fins
-
 class TransistorNet_self:
+    class Transistor:
+        def __init__(self, t_type : str, transistor_id : str, g_id : str, d_id : str, s_id : str):
+            self.type = t_type  # "pmos" / "nmos"
+            self.id = transistor_id
+            self.g_id = g_id    # gate
+            self.d_id = d_id    # drain
+            self.s_id = s_id    # source
+
+            # default values
+            self.w = 54.0       # width in nm
+            self.l = 20       # length in nm
+            self.nfin = 2      # number of fins
 
     def __init__(self):
         self.transistors = []          # the list of transistors in the net
@@ -38,7 +37,7 @@ class TransistorNet_self:
         pass
 
         # create a new transistor object and store it
-        t = Transistor(t_type, transistor_id, g_id, d_id, s_id)
+        t = self.Transistor(t_type, transistor_id, g_id, d_id, s_id)
         self.transistors.append(t)
         # update the node_info
         self.node_info[g_id] = (t, 'G')
