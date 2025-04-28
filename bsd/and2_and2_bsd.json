@@ -1,0 +1,79 @@
+{
+    "name": "and3_1",
+    "input_variables": ["A", "B", "C"],
+    "output_variables": ["Y"],
+    "bsd_networks": [
+        {
+            "net_id": "and_gate0",
+            "inputs": ["IN0", "IN1"],
+            "outputs": ["OUT"],
+            "nodes": [
+                {
+                    "id": "0n0",
+                    "gate": "IN0",                 
+                    "False": "VSS",
+                    "True": "1n0"
+                },
+                {
+                    "id": "1n0",
+                    "gate": "IN1",
+                    "False": "VSS",
+                    "True": "VDD"
+                }
+            ],
+            "out_node": [
+                {
+                    "output" : "OUT",
+                    "node" : "0n0"
+                }
+            ]
+        },
+        {
+            "net_id": "and_gate1",
+            "inputs": ["IN0", "IN1"],
+            "outputs": ["OUT"],
+            "nodes": [
+                {
+                    "id": "0n0",
+                    "gate": "IN0",                
+                    "False": "VSS",
+                    "True": "1n0"
+                },
+                {
+                    "id": "1n0",
+                    "gate": "IN1",
+                    "False": "VSS",
+                    "True": "VDD"
+                }
+            ],
+            "out_node": [
+                {
+                    "output" : "OUT",
+                    "node" : "0n0"
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "source": "A",
+            "target": "and_gate0.IN0"
+        },
+        {
+            "source": "B",
+            "target": "and_gate0.IN1"
+        },
+        {
+            "source": "and_gate0.OUT",
+            "target": "and_gate1.IN0"
+        },
+        {
+            "source": "C",
+            "target": "and_gate1.IN1"
+        },
+        {
+            "source": "and_gate1.OUT",
+            "target": "Y"
+        }
+    ]
+}
