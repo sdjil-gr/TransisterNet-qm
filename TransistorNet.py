@@ -110,6 +110,8 @@ class TransistorNet(TransistorNet_kernel):
             node_value = value_dict[node_id]
             if diffusion:
                 for next_node_id in self.get_connected_nodes(node_id):
+                    if next_node_id == node_id: # pass the same node
+                        continue
                     if next_node_id in value_dict:
                         if value_dict[next_node_id] == None:
                             value_dict[next_node_id] = node_value
@@ -175,3 +177,4 @@ class TransistorNet(TransistorNet_kernel):
     
         return result
         
+    
