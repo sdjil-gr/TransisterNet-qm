@@ -176,5 +176,18 @@ class TransistorNet(TransistorNet_kernel):
                     raise Exception("Invalid networks.")
     
         return result
+    
+    def functional_simulate_graph(self,input):
+        start = "Y"
+        backup = self
+        op_list = backup.node_info[start]
+        backup.cut_invalid_node(op_list,input)
+        id = op_list.head.node_id
+        tran_off = id//3
+        tran = backup.transistors[tran_off]
+        op_list = tran.s_list
+        print(op_list.head.node_id)
+        backup.cut_all(op_list,input)
+        return backup.result
         
     
