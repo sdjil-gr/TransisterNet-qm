@@ -20,21 +20,21 @@ class link_list:
             self.head = node
         else:
             current = self.head
-            while current.next is not None:
-                current = current.next
-            current.next = node
+            while current.next is not None: # type: ignore
+                current = current.next # type: ignore
+            current.next = node # type: ignore
     
     def delete(self,node_id):
         if self.is_empty():
             print("empty list")
         else:
             current = self.head
-            while current.next is not None:
-                if current.next.node_id == node_id:
-                    tmp = current.next
-                    current.next = tmp.next
+            while current.next is not None: # type: ignore
+                if current.next.node_id == node_id: # type: ignore
+                    tmp = current.next # type: ignore
+                    current.next = tmp.next # type: ignore
                 else:
-                    current = current.next
+                    current = current.next # type: ignore
         
     
     def print_all(self):
@@ -71,11 +71,12 @@ class TransistorNet_kernel:
             self.list = link_list()
     
     def __init__(self):
-
+        self.type = 'graph'
         self.transistors = []          # the list of transistors in the net
         self.in_size = 0               # the number of inputs in the net
         self.out_size = 0              # the number of outputs in the net
         self.node_info = {}            # the metadata of nodes {id: (transistor_obj, 'G'/'D'/'S')}
+        self.node_list = {}
         self.tname = ""                # the name of the net
         self.special_nodes = []        # the list of special nodes in the net
         self.result = "True"
@@ -90,27 +91,32 @@ class TransistorNet_kernel:
         #self.node_id = self.node_id + 3
 
         tran = self.Transistor(t_type, transistor_id, g_id, d_id, s_id)
-        self.transistor_num = self.transistor_num + 1
+        # self.transistor_num = self.transistor_num + 1
         self.transistors.append(tran)
         #self.transistor_num = self.transistor_num + 1
-        self.node_info[g_id] = (tran.g_list)
-        self.node_info[d_id] = (tran.d_list)
-        self.node_info[s_id] = (tran.s_list)
+        self.node_list[g_id] = (tran.g_list)
+        self.node_list[d_id] = (tran.d_list)
+        self.node_list[s_id] = (tran.s_list)
+
+        self.node_info[g_id] = (tran, 'G')
+        self.node_info[d_id] = (tran, 'D')
+        self.node_info[s_id] = (tran, 'S')
         return tran
     
     def add_special_node(self, node_id, node_type):
         # 新增特殊节点（单节点，例如VDD、VSS、IN[]、OUT），返回该节点, vdd为-2，vss为-1，out为-3
         spec_node = self.Special_nodes(node_id)
         self.special_nodes.append(node_id)
-        self.node_info[node_id] = (spec_node.list)
+        self.node_list[node_id] = (spec_node.list)
+        self.node_info[node_id] = (None, node_type)
 
 
     def connect(self, node_id1, node_id2):
         # 连接两个节点,理论上gds的id除3向下取整即可得到transistor id，即在net中数组的下标
         print("connecting ", node_id1, "and ", node_id2)
 
-        node1 = self.node_info[node_id1]
-        node2 = self.node_info[node_id2]
+        node1 = self.node_list[node_id1]
+        node2 = self.node_list[node_id2]
         node1.append(node_id2)
         node2.append(node_id1)
 
@@ -123,7 +129,7 @@ class TransistorNet_kernel:
     def get_connected_nodes(self, node_id):
         # 获取与指定节点相连的节点列表
         connect_list = []
-        target_list = self.node_info[node_id]
+        target_list = self.node_list[node_id]
         node = target_list.head
         while node is not None:
             connect_list.append(node.node_id)
@@ -142,7 +148,7 @@ class TransistorNet_kernel:
     def cut_invalid_node(self,list,input):
         node = list.head
         while node is not None:
-            id = self.node_info[node.node_id]
+            id = self.node_list[node.node_id]
             if isinstance(id,int):
                 tran_off = id//3
                 tran = self.transistors[tran_off]
@@ -189,23 +195,6 @@ class TransistorNet_kernel:
                 print("reach VSS")
             node = node.next
         return
-
-
-
-    def functional_simulate(self,input):
-        start = "Y"
-        backup = self
-        op_list = backup.node_info[start]
-        backup.cut_invalid_node(op_list,input)
-        id = op_list.head.node_id
-        tran_off = id//3
-        tran = backup.transistors[tran_off]
-        op_list = tran.s_list
-        print(op_list.head.node_id)
-        backup.cut_all(op_list,input)
-        return backup.result
-
-    
             
     
     @staticmethod
@@ -237,9 +226,9 @@ class TransistorNet_kernel:
                     print(left,right)
                     input_var = f"In_{input_order[row_num]}"
                     pmos = Mynet.add_transistor("pmos")
-                    pmos_off = Mynet.transistor_num - 1
+                    pmos_off = len(Mynet.transistors) - 1
                     nmos = Mynet.add_transistor("nmos")
-                    nmos_off = Mynet.transistor_num - 1
+                    nmos_off = len(Mynet.transistors) - 1
                     
                     if left==-1:
                         Mynet.connect("VDD", pmos.s_id)
@@ -267,3 +256,19 @@ class TransistorNet_kernel:
 
         print("finish")
         return Mynet
+    
+    def node_wire(self, node_id):
+        return 'None'
+    
+    def functional_simulate_graph(self, inputs):
+        start = "Y"
+        backup = self
+        op_list = backup.node_info[start]
+        backup.cut_invalid_node(op_list, inputs)
+        id = op_list.head.node_id
+        tran_off = id//3
+        tran = backup.transistors[tran_off]
+        op_list = tran.s_list
+        print(op_list.head.node_id)
+        backup.cut_all(op_list, inputs)
+        return backup.result

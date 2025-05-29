@@ -74,7 +74,7 @@ class TransistorNet(TransistorNet_kernel):
                 f.write("\n")
 
                 for t in self.transistors:
-                    f.write(f"{t.id} {self.uf.find(t.d_id)} {self.uf.find(t.g_id)} {self.uf.find(t.s_id)} " \
+                    f.write(f"{t.id} {self.node_wire(t.d_id)} {self.node_wire(t.g_id)} {self.node_wire(t.s_id)} " \
                         + f"{'VSS' if t.type == 'nmos' else 'VDD'} {t.type} " \
                         + f"w={t.w}n l={t.l}n nfin={t.nfin} \n")
 
@@ -82,7 +82,7 @@ class TransistorNet(TransistorNet_kernel):
 
         pretreated()
 
-    def functional_simulate(self, inputs):
+    def functional_simulate_union(self, inputs):
         # simulate the net with given input values
         # inputs: a list of input values [value_0, value_1, ...] (values are 0 or 1)
         if(self.in_size != len(inputs)):
@@ -176,18 +176,10 @@ class TransistorNet(TransistorNet_kernel):
                     raise Exception("Invalid networks.")
     
         return result
-    
-    def functional_simulate_graph(self,input):
-        start = "Y"
-        backup = self
-        op_list = backup.node_info[start]
-        backup.cut_invalid_node(op_list,input)
-        id = op_list.head.node_id
-        tran_off = id//3
-        tran = backup.transistors[tran_off]
-        op_list = tran.s_list
-        print(op_list.head.node_id)
-        backup.cut_all(op_list,input)
-        return backup.result
         
+    def functional_simulate(self, inputs):
+        if self.type == "union":
+            return self.functional_simulate_union(inputs) # type: ignore
+        elif self.type == "graph":
+            return self.functional_simulate_graph(inputs) # type: ignore
     

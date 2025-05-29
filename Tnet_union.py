@@ -47,6 +47,7 @@ class TransistorNet_kernel:
                     self.rank[x_root] += 1
 
     def __init__(self):
+        self.type = 'union'
         self.transistors = []          # the list of transistors in the net
         self.uf = self.UnionFind()     # the union-find data structure for nodes
         self.in_size = 0               # the number of inputs in the net
@@ -66,7 +67,6 @@ class TransistorNet_kernel:
         # add to the uf
         for node_id in [g_id, d_id, s_id]:
             self.uf.add(node_id)
-            self.node_info[node_id] = (None, None)
         
         # create a new transistor object and store it
         t = self.Transistor(t_type, transistor_id, g_id, d_id, s_id)
@@ -95,3 +95,6 @@ class TransistorNet_kernel:
         # get the list of connected nodes
         root = self.uf.find(node_id)
         return self.uf.nodes[root]
+    
+    def node_wire(self, node_id):
+        return self.uf.find(node_id)
