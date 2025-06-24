@@ -260,7 +260,7 @@ class TransistorNet_kernel:
     def node_wire(self, node_id):
         return 'None'
     
-    def functional_simulate_graph(self, inputs):
+    def functional_simulate_kernel(self, inputs):
         start = "Y"
         backup = self
         op_list = backup.node_info[start]
